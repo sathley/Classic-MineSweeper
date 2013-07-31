@@ -94,7 +94,16 @@ textarea {
    ========================================================================== */
 
 
-
+.divHeader {
+    position: relative;
+    
+    
+        
+}
+.details {
+    position: relative
+        
+}
 
 
 
