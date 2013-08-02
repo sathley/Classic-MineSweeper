@@ -1,40 +1,57 @@
-<!DOCTYPE html>
+<!DOCTYPE html >
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js">
+<html class="no-js" lang="en">
 <!--<![endif]-->
-<style type="text/css">.divGame { }</style>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
+
 <body>
     <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="divHeader">
-        <h1>Welcome to MineSweeper</h1>
+    <div class="container">
+        <div class="divHeader">
+            <h1 class="jumbotron">Welcome to MineSweeper</h1>
+        </div>
+        <div class="container">
+
+            <div>
+                <label for="inpRows">Rows</label>
+                <input type="text" value="10" id="inpRows" class="input-large" name="asd" />
+            </div>
+            <div>
+                <label for="inpColumns">Columns</label>
+                <input type="text" value="10" id="inpColumns" class="input-large" />
+            </div>
+            <div>
+                <label for="inpMines">Mines</label>
+                <input type="text" value="10" id="inpMines" class="input-large " />
+            </div>
+            <input type="button" id="btnPlay" value="Play" class="btn btn-primary btn-large " />
+            <input type="button" id="btnReset" value="Reset" class="btn btn-primary btn-large " />
+        </div>
+        <div class="container" id="divGame">
+        </div>
     </div>
-    <div class="container details">
-        <input type="number" max="20" min="10" value="4" id="inpRows"/>
-        <input type="number" max="20" min="10" value="4" id="inpColumns" />
-        <input type="button" id="btnPlay" value="Play" />
-    </div>
-    <div class="divGame"></div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
@@ -47,6 +64,6 @@
             g.src = '//www.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g, s)
         }(document, 'script'));
-        </script>
+    </script>
 </body>
 </html>
