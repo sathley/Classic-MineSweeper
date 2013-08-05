@@ -20,40 +20,38 @@
     <script src="js/vendor/modernizr-2.6.2.min.js"></script>
     <link href="http://fonts.googleapis.com/css?family=Abel|Open+Sans:400,600" rel="stylesheet" />
 
-  <style>
+    <style>
+        /* http://css-tricks.com/perfect-full-page-background-image/ */
+        html {
+            background: url(img/6133364748_89f2365922_o.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
 
-      /* http://css-tricks.com/perfect-full-page-background-image/ */
-      html {
-          background: url(img/6133364748_89f2365922_o.jpg) no-repeat center center fixed;
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
-          -o-background-size: cover;
-          background-size: cover;
-      }
+        body {
+            padding-top: 20px;
+            font-size: 16px;
+            font-family: "Open Sans",serif;
+            background: transparent;
+        }
 
-      body {
-          padding-top: 20px;
-          font-size: 16px;
-          font-family: "Open Sans",serif;
-          background: transparent;
-      }
+        h1 {
+            font-family: "Abel", Arial, sans-serif;
+            font-weight: 400;
+            font-size: 40px;
+        }
 
-      h1 {
-          font-family: "Abel", Arial, sans-serif;
-          font-weight: 400;
-          font-size: 40px;
-      }
+        /* Override B3 .panel adding a subtly transparent background */
+        .panel {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
 
-      /* Override B3 .panel adding a subtly transparent background */
-      .panel {
-          background-color: rgba(255, 255, 255, 0.9);
-      }
-
-      .margin-base-vertical {
-          margin: 40px 0;
-      }
-
-  </style>
+        .margin-base-vertical {
+            margin: 40px 0;
+        }
+    </style>
 
 
 </head>
@@ -68,27 +66,31 @@
         <div class="divHeader text-center">
             <h1>Welcome to MineSweeper</h1>
         </div>
-        <div class="container" id ="divControls">
+        <div class="container" id="divControls">
             <fieldset>
-                <legend>Game Detils</legend>
+                <legend>Game Details</legend>
                 <label for="inpRows">Rows</label>
-                <input type="text" id="inpRows" class="input-large" name="asd" />
-            
+                <input type="text" id="inpRows" class="input-large" />
+
                 <label for="inpColumns">Columns</label>
                 <input type="text" id="inpColumns" class="input-large" />
-            
+
                 <label for="inpMines">Mines</label>
                 <input type="text" id="inpMines" class="input-large " />
-            
+
             </fieldset>
             <div class="">
-                <input type="button" id="btnPlay" style="margin: 30px;" value="Play" class="btn btn-primary btn-large " />
+                <input type="button" id="btnPlay" style="margin: 30px;" value="Play" class="btn btn-success btn-large " />
+                <div class="panel .alert" id="divalert">All the best !</div>
+
             </div>
+            <div class="container panel text-center" style="float: left" id="divGame">
+            </div>
+
         </div>
-        <div class="container panel" style="float: left" id="divGame"></div>
-        <div class="container panel .alert" style="float: right; margin-right: 150px" id="divalert">All the best !</div>
+
     </div>
-    <div class="margin-base-vertical" style="float: right">sushant</div>
+    <div class="bottom-right">Sushant</div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>

@@ -6,7 +6,7 @@ function enableMinesweeper() {
 
 var tilesToWin = 0;
 function minesweeper(param) {
-    $('#divalert').empty().removeClass('alert-danger').removeClass('alert-success');
+    $('#divalert').empty().removeClass('alert-danger').removeClass('alert-success').html("All the best !");
     var $gameDiv = $("#" + param.data.gameDivId);
     $gameDiv.empty();
 
@@ -58,7 +58,7 @@ function minesweeper(param) {
         $gameDiv.append(div);
         for (var j1 = 0; j1 < columns; j1++) {
             btnId = "btn_" + i1 + "_" + j1;
-            var btn = "<button style = 'margin:3px' class = 'btn btn-default btn-primary' id = '" + btnId + "'>&nbsp&nbsp&nbsp</button>";
+            var btn = "<button style = 'margin:3px' class = 'btn btn-default' id = '" + btnId + "'>&nbsp&nbsp&nbsp</button>";
             $("#" + divId).append(btn);
             var parameters;
             if (minePositions.indexOf(tileCount) !== -1) {
