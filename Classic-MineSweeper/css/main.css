@@ -22,7 +22,11 @@ body {
     font-size: 1em;
     line-height: 1.4;
 }
-
+.center {
+     float: none;
+     margin-left: auto;
+     margin-right: auto;
+}
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
  * These selection rule sets have to be separate.

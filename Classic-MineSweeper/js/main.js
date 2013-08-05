@@ -4,31 +4,38 @@ function enableMinesweeper() {
     $('#btnPlay').click({ gameDivId: "divGame" }, minesweeper);
 }
 
+var tilesToWin = 0;
 function minesweeper(param) {
-
+    $('#divalert').empty().removeClass('alert-danger').removeClass('alert-success');
     var $gameDiv = $("#" + param.data.gameDivId);
     $gameDiv.empty();
 
     var rowVal = $('#divControls #inpRows').val();
-    if ($.isNumeric(rowVal) === false) {
-        alert(rowVal + ' is an incorrect number of rows.');
+    if ($.isNumeric(rowVal) === false || parseInt(rowVal) <= 0) {
+        $("#divalert").html(rowVal + " is an incorrect number of rows.").addClass('alert-danger');
         return;
     }
     var rows = parseInt(rowVal);
 
     var colVal = $('#divControls #inpColumns').val();
-    if ($.isNumeric(colVal) === false) {
-        alert(colVal + ' is an incorrect number of columns.');
+    if ($.isNumeric(colVal) === false || parseInt(colVal) <= 0) {
+        $("#divalert").html(colVal + " is an incorrect number of columns.").addClass('alert-danger');
         return;
     }
     var columns = parseInt(colVal);
 
     var mineVal = $('#divControls #inpMines').val();
-    if ($.isNumeric(mineVal) === false) {
-        alert(mineVal + ' is an incorrect number of mines.');
+    if ($.isNumeric(mineVal) === false || parseInt(mineVal) <= 0) {
+        $("#divalert").html(mineVal + " is an incorrect number of mines.").addClass('alert-danger');
         return;
     }
     var mines = parseInt(mineVal);
+
+    if ((rowVal * colVal) < mineVal) {
+        $("#divalert").html("Too many mines !").addClass('alert-danger');
+        return;
+
+    }
 
     // decide mine positions
     var minePositions = new Array;
@@ -66,10 +73,11 @@ function minesweeper(param) {
             tileCount++;
         }
     }
+    tilesToWin = (rows * columns) - mines;
 }
 
 function btnClick(e, params) {
-    var row, col , maxRow, maxCol, isRecursing;
+    var row, col, maxRow, maxCol, isRecursing;
     if (params) {
         row = params.row;
         col = params.col;
@@ -83,8 +91,7 @@ function btnClick(e, params) {
         maxRow = e.data.maxRow;
         maxCol = e.data.maxCol;
     }
-    
-    //alert(row + ',' + col + '  ' + maxRow + ',' + maxCol + ' ' + isMine + ' ' + isRecursing);
+
     //  If mine 
     if ($("#btn_" + row + "_" + col).attr("disabled") === "disabled")
         return;
@@ -94,14 +101,14 @@ function btnClick(e, params) {
         return;
     var $btn;
     if (isRecursing === false && isMine === true) {
-        alert("Kaboom !");
-        for (var i = 0; i < maxRow; i++) {
-            for (var j = 0; j < maxCol; j++) {
-                $btn = $('#btn_' + i + "_" + j);
+        $("#divalert").html('Kaboom').addClass("alert-danger");
+        for (var i3 = 0; i3 < maxRow; i3++) {
+            for (var j3 = 0; j3 < maxCol; j3++) {
+                $btn = $('#btn_' + i3 + "_" + j3);
                 $btn.attr("disabled", "disabled");
                 $btn.off();
                 if ($btn.data("ismine") === true) {
-                    $btn.text(" X ");
+                    $btn.html("&nbsp" + "B").css('color','red');
                 }
             }
         }
@@ -112,13 +119,12 @@ function btnClick(e, params) {
     $btn.attr("disabled", "disabled");
     var score = 0;
     var adjacentButtons = new Array({ row1: row - 1, col1: col - 1 }, { row1: row - 1, col1: col }, { row1: row - 1, col1: col + 1 },
-            { row1: row, col1: col - 1 }, { row1: row, col1: col + 1 },
-            { row1: row + 1, col1: col - 1 }, { row1: row + 1, col1: col }, { row1: row + 1, col1: col + 1 });
+        { row1: row, col1: col - 1 }, { row1: row, col1: col + 1 },
+        { row1: row + 1, col1: col - 1 }, { row1: row + 1, col1: col }, { row1: row + 1, col1: col + 1 });
 
     $.each(adjacentButtons, function (index, val) {
         if (val.row1 < 0 || val.row1 > maxRow - 1 || val.col1 < 0 || val.col1 > maxCol - 1) {
-        }
-        else {
+        } else {
             var id = "#btn_" + val.row1 + "_" + val.col1;
             if ($(id).data("ismine") === true)
                 score++;
@@ -126,15 +132,44 @@ function btnClick(e, params) {
     });
 
     if (score !== 0) {
-        $btn.html("&nbsp" + score.toString() + "&nbsp");
-    }
-    else {
+        $btn.html("&nbsp" + score.toString());
+        tilesToWin--;
+        if (tilesToWin == 0) {
+            $("#divalert").html('Congrats !').addClass("alert-success");
+            for (var i4 = 0; i4 < maxRow; i4++) {
+                for (var j4 = 0; j4 < maxCol; j4++) {
+                    $btn = $('#btn_' + i4 + "_" + j4);
+                    $btn.attr("disabled", "disabled");
+                    $btn.off();
+                    if ($btn.data("ismine") === true) {
+                        $btn.html("&nbsp" + "B").css('color', 'red');
+                    }
+                }
+            }
+        }
+    } else {
         $btn.html("&nbsp&nbsp&nbsp");
+        tilesToWin--;
+        if (tilesToWin === 0) {
+            $("#divalert").html('Congrats !').addClass("alert-success");
+            for (var i = 0; i < maxRow; i++) {
+                for (var j = 0; j < maxCol; j++) {
+                    $btn = $('#btn_' + i + "_" + j);
+                    $btn.attr("disabled", "disabled");
+                    $btn.off();
+                    if ($btn.data("ismine") === true) {
+                        $btn.html("&nbsp" + "B").css('color', 'red');
+                    }
+                }
+            }
+        }
         $.each(adjacentButtons, function (index, val) {
             if (val.row1 < 0 || val.row1 > maxRow - 1 || val.col1 < 0 || val.col1 > maxCol - 1) {
             } else {
-                $btn.trigger("click", [{ row: val.row1, col: val.col1, maxRow: maxRow, maxCol: maxCol,  isRecursing: true }]);
+                $btn.trigger("click", [{ row: val.row1, col: val.col1, maxRow: maxRow, maxCol: maxCol, isRecursing: true }]);
             }
         });
     }
 }
+
+
