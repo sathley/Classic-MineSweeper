@@ -1,26 +1,34 @@
 $(document).ready(enableMinesweeper());
 
 function enableMinesweeper() {
-    var numRows = ($('#inpRows').val());
-    var numColumns = ($('#inpColumns').val());
-    var numMines = $('#inpMines').val();
-    $('#btnPlay').click(function () { minesweeper(numRows, numColumns, numMines, "divGame"); });
+    $('#btnPlay').click({ gameDivId: "divGame" }, minesweeper);
 }
 
-function minesweeper(numRows, numColumns, numMines, gameDivId) {
-    //  Clear game area
-    document.getElementById(gameDivId).innerHTML = "";
-    
-    var gameDiv = $("#" + gameDivId);
-    if (typeof parseInt(numRows) !== 'number')
-        alert(numRows + 'is an incorrect number of rows.');
-    var rows = parseInt(numRows);
-    if (typeof parseInt(numColumns) !== 'number')
-        alert(numRows + 'is an incorrect number of columns.');
-    var columns = parseInt(numColumns);
-    if (typeof parseInt(numMines) !== 'number')
-        alert(numMines + 'is an incorrect number of mines.');
-    var mines = parseInt(numMines);
+function minesweeper(param) {
+
+    var $gameDiv = $("#" + param.data.gameDivId);
+    $gameDiv.empty();
+
+    var rowVal = $('#divControls #inpRows').val();
+    if ($.isNumeric(rowVal) === false) {
+        alert(rowVal + ' is an incorrect number of rows.');
+        return;
+    }
+    var rows = parseInt(rowVal);
+
+    var colVal = $('#divControls #inpColumns').val();
+    if ($.isNumeric(colVal) === false) {
+        alert(colVal + ' is an incorrect number of columns.');
+        return;
+    }
+    var columns = parseInt(colVal);
+
+    var mineVal = $('#divControls #inpMines').val();
+    if ($.isNumeric(mineVal) === false) {
+        alert(mineVal + ' is an incorrect number of mines.');
+        return;
+    }
+    var mines = parseInt(mineVal);
 
     // decide mine positions
     var minePositions = new Array;
@@ -32,97 +40,101 @@ function minesweeper(numRows, numColumns, numMines, gameDivId) {
             numMinesCopy--;
         }
     }
-    alert(minePositions);
+    //alert(minePositions);
 
     //  lay tiles, set mines, attach click events
     var btnId;
-    var count = 0;
+    var tileCount = 0;
     for (var i1 = 0; i1 < rows; i1++) {
         var divId = "div_" + i1;
         var div = "<div id = '" + divId + "'><div>";
-        gameDiv.append(div);
+        $gameDiv.append(div);
         for (var j1 = 0; j1 < columns; j1++) {
             btnId = "btn_" + i1 + "_" + j1;
             var btn = "<button style = 'margin:3px' class = 'btn btn-default btn-primary' id = '" + btnId + "'>&nbsp&nbsp&nbsp</button>";
             $("#" + divId).append(btn);
-            $('#' + btnId).data.row = shitFunction(i1);
-            $('#' + btnId).data.col = shitFunction(j1);
-            $('#' + btnId).click(function() { btnClick({ maxRow: rows - 1, maxCol: columns - 1 }); });
-            if (minePositions.indexOf(count) !== -1) {
-                $("#" + btnId).data({ "ismine": true });
+            var parameters;
+            if (minePositions.indexOf(tileCount) !== -1) {
+                $("#" + btnId).data("ismine", true);
+                parameters = { row: i1, col: j1, maxRow: rows, maxCol: columns, isRecursing: false };
+                $('#' + btnId).on("click", parameters, btnClick);
+            } else {
+                $("#" + btnId).data("ismine", false);
+                parameters = { row: i1, col: j1, maxRow: rows, maxCol: columns, isRecursing: false };
+                $('#' + btnId).on("click", parameters, btnClick);
             }
+            tileCount++;
         }
+    }
+}
+
+function btnClick(e, params) {
+    var row, col , maxRow, maxCol, isRecursing;
+    if (params) {
+        row = params.row;
+        col = params.col;
+        isRecursing = params.isRecursing;
+        maxRow = params.maxRow;
+        maxCol = params.maxCol;
+    } else {
+        row = e.data.row;
+        col = e.data.col;
+        isRecursing = e.data.isRecursing;
+        maxRow = e.data.maxRow;
+        maxCol = e.data.maxCol;
     }
     
-    function shitFunction(lol) {
-        return (function () {
-            return lol;
-        })();
-    }
+    //alert(row + ',' + col + '  ' + maxRow + ',' + maxCol + ' ' + isMine + ' ' + isRecursing);
+    //  If mine 
+    if ($("#btn_" + row + "_" + col).attr("disabled") === "disabled")
+        return;
+    var isMine = $("#btn_" + row + "_" + col).data("ismine");
 
-
-    //  Set scores
-    for (i = 0; i < rows; i++) {
-        for (j = 0; j < columns; j++) {
-            var mineCount = 0;
-            btnId = "#btn_" + i + "_" + j;
-
-            if ($(btnId).data.ismine === true)
-                $(btnId).data.score = -1;
-
-            var adjacentButtons = new Array({ row: i - 1, col: j - 1 }, { row: i - 1, col: j }, { row: i - 1, col: j + 1 },
-                { row: i, col: j - 1 }, { row: i, col: j + 1 },
-                { row: i + 1, col: j - 1 }, { row: i + 1, col: j }, { row: i + 1, col: j + 1 });
-            $.each(adjacentButtons, function (index, val) {
-                if (isMine({ row: val.row, col: val.col, maxRow: rows - 1, maxCol: columns - 1 }) === true) {
-                    mineCount++;
+    if (isRecursing === true && isMine === true)
+        return;
+    var $btn;
+    if (isRecursing === false && isMine === true) {
+        alert("Kaboom !");
+        for (var i = 0; i < maxRow; i++) {
+            for (var j = 0; j < maxCol; j++) {
+                $btn = $('#btn_' + i + "_" + j);
+                $btn.attr("disabled", "disabled");
+                $btn.off();
+                if ($btn.data("ismine") === true) {
+                    $btn.text(" X ");
                 }
-            });
-            $(btnId).data.score = mineCount;
+            }
         }
+        return;
     }
 
-    //  Checks if tile is mine
+    $btn = $('#btn_' + row + "_" + col);
+    $btn.attr("disabled", "disabled");
+    var score = 0;
+    var adjacentButtons = new Array({ row1: row - 1, col1: col - 1 }, { row1: row - 1, col1: col }, { row1: row - 1, col1: col + 1 },
+            { row1: row, col1: col - 1 }, { row1: row, col1: col + 1 },
+            { row1: row + 1, col1: col - 1 }, { row1: row + 1, col1: col }, { row1: row + 1, col1: col + 1 });
 
-    function isMine(param) {
-        var row = param.row;
-        var col = param.col;
-        var maxRow = param.maxRow;
-        var maxCol = param.maxCol;
-        if (row < 0 || row > maxRow || col < 0 || col > maxCol)
-            return false;
-        var id = "#btn_" + row + "_" + col;
-        if ($(id).data.ismine === true)
-            return true;
-        return false;
-    }
-
-    function btnClick(params) {
-        btnId = "#btn_" + $(this).data.row + "_" + $(this).data.col;
-        if ($(btnId).data("ismine") === true)
-            alert("Kaboom!");
+    $.each(adjacentButtons, function (index, val) {
+        if (val.row1 < 0 || val.row1 > maxRow - 1 || val.col1 < 0 || val.col1 > maxCol - 1) {
+        }
         else {
-            openTile({ maxRow: params.maxRow, maxCol: params.maxCol, row: $(this).data.row, col: $(this).data.col });
+            var id = "#btn_" + val.row1 + "_" + val.col1;
+            if ($(id).data("ismine") === true)
+                score++;
         }
-    }
+    });
 
-    function openTile(params) {
-        if (params.row < 0 || params.row > params.maxRow || params.col < 0 || params.col > params.maxCol)
-            return;
-        btnId = "#btn_" + params.row + "_" + params.col;
-        if ($(btnId).attr("disable") === true)
-            return;
-        if ($(btnId).data.score > 0) {
-            $(btnId).text = $(btnId).data.score;
-            $(btnId).attr("disable", true);
-            $(btnId).addClass("disabled");
-            return;
-        }
-        if ($(btnId).data.score === 0) {
-            var adjacentbtns = new Array({ row: params.row - 1, col: params.col - 1 }, { row: params.row - 1, col: params.col }, { row: params.row - 1, col: params.col + 1 },
-                { row: params.row, col: params.col - 1 }, { row: params.row, col: params.col + 1 },
-                { row: params.row + 1, col: params.col - 1 }, { row: params.row + 1, col: params.col }, { row: params.row + 1, col: params.col + 1 });
-            $.each(adjacentbtns, function (index, val) { openTile({ row: val.row, col: val.col, maxRow: params.maxRow, maxCol: params.maxCol }); });
-        }
+    if (score !== 0) {
+        $btn.html("&nbsp" + score.toString() + "&nbsp");
+    }
+    else {
+        $btn.html("&nbsp&nbsp&nbsp");
+        $.each(adjacentButtons, function (index, val) {
+            if (val.row1 < 0 || val.row1 > maxRow - 1 || val.col1 < 0 || val.col1 > maxCol - 1) {
+            } else {
+                $btn.trigger("click", [{ row: val.row1, col: val.col1, maxRow: maxRow, maxCol: maxCol,  isRecursing: true }]);
+            }
+        });
     }
 }
